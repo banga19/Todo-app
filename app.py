@@ -5,7 +5,10 @@ from flask_sqlalchemy import SQLAlchemy
 app = Flask(__name__)
 
 # connecting database
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://banga:banga123@localhost/5432/todoapp'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://banga:banga123@localhost:5432/todoapp'
+
+# disable database-track-modifications that add overhead
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 
 #linking our app with SQLALchemy
 db = SQLAlchemy(app)
