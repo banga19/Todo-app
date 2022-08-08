@@ -13,7 +13,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 #linking our app with SQLALchemy
 db = SQLAlchemy(app)
 
-
+# Models
 class Todo(db.Model):
     __tablename__= 'todos'
     id = db.Column(db.Integer, primary_key=True)
@@ -26,9 +26,10 @@ class Todo(db.Model):
 db.create_all()
 
 ## code below links html template and our Todo-app
-@app.route('/')
-def index():
-    return render_template('index.html', data=Todo.query.all()) 
+@app.route('/') # <-- controller
+def index(): 
+    return render_template('index.html', data=Todo.query.all())  # <-- first part {'index.html'} is the 'View' layer,
+     # second layer {data=Todo.query.all()} is the 'Model'. This code represents the 'R' in CRUD
 
 
 #always include this at the bottom of your code (port 3000 is only necessary in workspaces)
