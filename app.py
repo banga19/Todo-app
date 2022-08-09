@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 
 #connecting our app to flask
@@ -25,6 +25,15 @@ class Todo(db.Model):
 
 db.create_all()
 
+## code below creates a new todo item, saves the new record to the db 
+# and updates the View with new list of records
+@app.route('/todos/create', methods=['POST'])
+def create_todo():
+    description = request.form.get('description', '')
+    todo = Todo(description=description)
+    db.session.add(todo)
+    db.session.commit()
+    return redirect(url_for('index'))
 
 
 ## code below links html template and our Todo-app
@@ -32,13 +41,6 @@ db.create_all()
 def index(): 
     return render_template('index.html', data=Todo.query.all())  # <-- first part {'index.html'} is the 'View' layer,
      # second layer {data=Todo.query.all()} is the 'Model'. This code represents the 'R' in CRUD
-
-
-
-@app.route('/todos/create', methods=['POST'])
-def create_todo():
-    return
-
 
 
 
