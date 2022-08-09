@@ -4,6 +4,14 @@
     <title>Todo App</title>
 </head>
 <body>
+
+    <!--code below will create a text input area for creating new Todo Items-->
+    <form method="post" action="/todos/create">
+        <input type="text" name="description">
+        <input type="submit" value="Create">
+    </form>
+
+   <!-- Code below will display list of Todo items--> 
     <ul>
         {% for d in data %}
         <li> {{d.description}}</li>
