@@ -23,6 +23,7 @@ class Todo(db.Model):
     def __repr__(self):
         return f'<Todo {self.id}, {self.description}>'
 
+#code below creates the Todo {Table} in the todoapp {database}
 db.create_all()
 
 ## code below creates a new todo item, saves the new record to the db 
