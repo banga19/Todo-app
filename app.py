@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, jsonify
 from flask_sqlalchemy import SQLAlchemy
 
 #connecting our app to flask
@@ -26,15 +26,7 @@ class Todo(db.Model):
 #code below creates the Todo {Table} in the todoapp {database}
 db.create_all()
 
-## code below creates a new todo item, saves the new record to the db 
-# and updates the View with new list of records
-@app.route('/todos/create', methods=['POST'])
-def create_todo():
-    description = request.form.get('description', '')
-    todo = Todo(description=description)
-    db.session.add(todo)
-    db.session.commit()
-    return redirect(url_for('index'))
+
 
 
 ## code below links html template and our Todo-app
@@ -44,6 +36,18 @@ def index():
      # second layer {data=Todo.query.all()} is the 'Model'. This code represents the 'R' in CRUD
 
 
+
+## code below creates a new todo item, saves the new record to the db 
+# and updates the View with new list of records
+@app.route('/todos/create', methods=['POST'])
+def create_todo():
+    description = request.get_json()['description']
+    todo = Todo(description=description)
+    db.session.add(todo)
+    db.session.commit()
+    return jsonify({
+        'description': todo.description
+    })
 
 #always include this at the bottom of your code (port 3000 is only necessary in workspaces)
 
