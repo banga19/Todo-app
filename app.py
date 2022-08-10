@@ -30,18 +30,20 @@ db.create_all()
 
 
 
-
+#This code below represents the 'R' in CRUD
 ## code below links html template and our Todo-app
 @app.route('/') # <-- controller
 def index(): 
     return render_template('index.html', data=Todo.query.all())  # <-- first part {'index.html'} is the 'View' layer,
-     # second layer {data=Todo.query.all()} is the 'Model'. This code represents the 'R' in CRUD
+     # second layer {data=Todo.query.all()} is the 'Model'. 
 
 
-
+## Code below reprensents the 'C' in CRUD
 ## code below creates a new todo item, saves the new record to the db 
 # and updates the View with new list of records
-# it uses ajax to fetch requests from client side
+# it uses ajax to fetch requests from client side and
+##? how to make the client refresh only a part of it, instead of the whole webpage
+
 @app.route('/todos/create', methods=['POST'])
 def create_todo():
     error = False
