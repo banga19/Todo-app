@@ -47,10 +47,10 @@
                 console.log(jsonResponse);
                 const liItem = document.createElement('LI');
                 liItem.innerHTML = jsonResponse('description');
-                document.getElementById('todos').appendChild(liItem);
-                document.getElementById('error').className='hidden';
-            })
-            .catch(function() {
+                document.getElementById('todos').appendChild(liItem); // adds new items to the list
+                document.getElementById('error').className='hidden'; // will display error message if code fails
+            }) 
+            .catch(function() { // will not dsiplay error messaage if code fails
                 document.getElementById('error').className='';
             })
         }

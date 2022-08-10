@@ -39,6 +39,7 @@ def index():
 
 ## code below creates a new todo item, saves the new record to the db 
 # and updates the View with new list of records
+# it uses ajax to fetch requests from client side
 @app.route('/todos/create', methods=['POST'])
 def create_todo():
     description = request.get_json()['description']
