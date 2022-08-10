@@ -12,7 +12,7 @@
 
     <!--code below will create a text input area for creating new Todo Items-->
     <form id="form">
-        <input type="text" name="description">
+        <input type="text" name="description" id="description">
         <input type="submit" value="Create">
     </form>
 
@@ -28,7 +28,7 @@
     </ul>
 
     <script>
-        document.getElementById('form'.onsubmit = function(e) {
+        document.getElementById('form').onsubmit = function(e) {
             e.preventDefault();
             fetch('/todos/create', {
                 method : 'POST',
@@ -46,14 +46,14 @@
             .then(function(jsonResponse) {      
                 console.log(jsonResponse);
                 const liItem = document.createElement('LI');
-                liItem.innerHTML = jsonResponse['description'];
+                liItem.innerHTML = jsonResponse('description');
                 document.getElementById('todos').appendChild(liItem);
                 document.getElementById('error').className='hidden';
             })
             .catch(function() {
                 document.getElementById('error').className='';
             })
-        })
+        }
     </script>
 </body>
 </html>
