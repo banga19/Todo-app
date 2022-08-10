@@ -1,5 +1,7 @@
-from flask import Flask, render_template, request, redirect, url_for, jsonify
+from flask import Flask, render_template, request, redirect, url_for, jsonify, abort
 from flask_sqlalchemy import SQLAlchemy
+import sys ## use to print out system info incase code brings out an error
+
 
 #connecting our app to flask
 app = Flask(__name__)
@@ -42,13 +44,26 @@ def index():
 # it uses ajax to fetch requests from client side
 @app.route('/todos/create', methods=['POST'])
 def create_todo():
-    description = request.get_json()['description']
-    todo = Todo(description=description)
-    db.session.add(todo)
-    db.session.commit()
-    return jsonify({
-        'description': todo.description
-    })
+    error = False
+    body = {}
+
+    try:
+        description = request.get_json()['description']
+        todo = Todo(description=description)
+        db.session.add(todo)
+        db.session.commit()
+        body['description'] = todo.description
+    except:
+        db.session.rollback()
+        print(sys.exc_info())
+    finally:
+        db.session.close()
+
+    if error: ## if something goes wrong in the code, then show error with status (400)
+        abort (400)
+
+    if not error: ## if code runs succcesfully, display the new object to the Client after adding it to the DB
+        return jsonify(body)
 
 #always include this at the bottom of your code (port 3000 is only necessary in workspaces)
 
