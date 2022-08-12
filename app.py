@@ -38,7 +38,7 @@ class Todo(db.Model):
 @app.route('/') # <-- controller
 def index(): 
     return render_template('index.html', data=Todo.query.all())  # <-- first part {'index.html'} is the 'View' layer,
-     # second layer {data=Todo.query.all()} is the 'Model'. 
+     # second layer {data=Todo.query.all()} is the 'Model' that has the data to be displayed. 
 
 
 ## Code below reprensents the 'C' in CRUD
