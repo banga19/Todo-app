@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify, abort
 from flask_sqlalchemy import SQLAlchemy
 import sys ## use to print out system info incase code brings out an error
-
+from flask_migrate import Migrate
 
 #connecting our app to flask
 app = Flask(__name__)
@@ -15,6 +15,9 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 #linking our app with SQLALchemy
 db = SQLAlchemy(app)
 
+## enables db migration
+migrate = Migrate(app, db)
+
 # Models
 class Todo(db.Model):
     __tablename__= 'todos'
@@ -26,7 +29,7 @@ class Todo(db.Model):
         return f'<Todo {self.id}, {self.description}>'
 
 #code below creates the Todo {Table} in the todoapp {database}
-db.create_all()
+#db.create_all()
 
 
 
@@ -70,4 +73,4 @@ def create_todo():
 #always include this at the bottom of your code (port 3000 is only necessary in workspaces)
 
 #if __name__ == '__main__':
-#   app.run(host="0.0.0.0", port=3000)
+#    app.run(host="0.0.0.0", port=3000)
