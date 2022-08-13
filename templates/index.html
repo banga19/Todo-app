@@ -6,6 +6,28 @@
         .hidden {
             display: none;
         }
+        ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            width:300px;
+        }
+        li {
+        clear: both;
+        }
+        li button {
+            -webkit-appearance: none;
+            border: none;
+            outline: none;
+            color: red;
+            float: right;
+            cursor: pointer;
+            font-size: 20px;
+        }
+        .lists-wrapper, .todos-wrapper {
+            display: inline-block;
+            vertical-align: top;
+        }
     </style>
 </head>
 <body>
@@ -23,11 +45,12 @@
    <!-- Code below will display list of Todo items--> 
     <ul id="todos">
         {% for d in data %}
-        <li> {{d.description}}</li>
+        <li> <input class="check-completed" data-id="{{ d.id }}" type="checkbox" {% if d.completed %} checked {% endif %}> {{d.description}}</li>
         {% endfor %}
     </ul>
 
     <script>
+        // code below deals with the "C" & "R" section in CRUD
         const descInput = document.getElementById('description');
         document.getElementById('form').onsubmit = function(e) {
             e.preventDefault();
@@ -55,6 +78,33 @@
                 document.getElementById('error').className='';
             })
         }
+
+        //code below deals with the "U" section in CRUD
+        const checkboxes = document.querySelectorAll('.check-completed')
+        for (let i = 0 ; i < checkboxes.length ; i++) {
+            const checkbox = checkboxes[i];
+            checkbox.onchange = function(e) {
+               const newCompleted = e.target.checked;
+               const todoId = e.target.dataset['id'];
+               fetch('/todos/' + todoId + '/set-completed', {
+                method: 'POST',
+                body: JSON.stringify({
+                    'completed': newCompleted
+                }),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+               })
+                .then(function() {
+                    document.getElementById('error').className = 'hidden'; // will hide error message if everything goes on well
+                }) 
+                .catch(function() { // will not dsiplay error messaage if code fails
+                    document.getElementById('error').className='';
+                })
+            
+            }
+        }
+
     </script>
 </body>
 </html>

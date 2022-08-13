@@ -1,3 +1,4 @@
+from subprocess import CompletedProcess
 from flask import Flask, render_template, request, redirect, url_for, jsonify, abort
 from flask_sqlalchemy import SQLAlchemy
 import sys ## use to print out system info incase code brings out an error
@@ -37,7 +38,7 @@ class Todo(db.Model):
 ## code below links html template and our Todo-app
 @app.route('/') # <-- controller
 def index(): 
-    return render_template('index.html', data=Todo.query.all())  # <-- first part {'index.html'} is the 'View' layer,
+    return render_template('index.html', data=Todo.query.order_by('id').all())  # <-- first part {'index.html'} is the 'View' layer,
      # second layer {data=Todo.query.all()} is the 'Model' that has the data to be displayed. 
 
 
@@ -70,6 +71,28 @@ def create_todo():
     if not error: ## if code runs succcesfully, display the new object to the Client after adding it to the DB
         return jsonify(body)
 
+
+
+
+# controller code below deals with the "U" section in CRUD 
+@app.route('/todos/<todo_id>/set-completed', methods=['POST'])
+def set_completed_todo(todo_id):
+    try:
+        completed = request.get_json()['completed']
+        todo = Todo.query.get(todo_id)
+        todo.completed = completed
+        db.session.commit()
+
+    except:
+        db.sessio.rollback()
+    finally:
+        db.session.close()
+
+    return redirect(url_for('index')) # after refresh, <- will return fresh items in the list 
+
+  
+
+    
 #always include this at the bottom of your code (port 3000 is only necessary in workspaces)
 
 #if __name__ == '__main__':
