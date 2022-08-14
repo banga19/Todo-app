@@ -38,7 +38,7 @@ class Todo(db.Model):
 ## code below links html template and our Todo-app
 @app.route('/') # <-- controller
 def index(): 
-    return render_template('index.html', data=Todo.query.order_by('id').all())  # <-- first part {'index.html'} is the 'View' layer,
+    return render_template('index.html', todos=Todo.query.order_by('id').all())  # <-- first part {'index.html'} is the 'View' layer,
      # second layer {data=Todo.query.all()} is the 'Model' that has the data to be displayed. 
 
 
@@ -90,8 +90,17 @@ def set_completed_todo(todo_id):
 
     return redirect(url_for('index')) # after refresh, <- will return fresh items in the list 
 
-  
-
+# code below deals with "D" in CRUD
+@app.route('/todos/<todo_id>', methods=['DELETE'])
+def delete_todo(todo_id):
+    try:
+        Todo.query.filter_by(id=todo_id).delete()
+        db.session.commit()
+    except:
+        db.session.rollback()
+    finally:
+        db.session.close()
+    return jsonify({'success': True})
     
 #always include this at the bottom of your code (port 3000 is only necessary in workspaces)
 
