@@ -59,30 +59,28 @@ def index():
 # and updates the View with new list of records
 # it uses ajax to fetch requests from client side and
 ##? how to make the client refresh only a part of it, instead of the whole webpage
-
 @app.route('/todos/create', methods=['POST'])
 def create_todo():
-    error = False
-    body = {}
-
-    try:
-        description = request.get_json()['description']
-        todo = Todo(description=description)
-        db.session.add(todo)
-        db.session.commit()
-        body['description'] = todo.description
-    except:
-        db.session.rollback()
-        print(sys.exc_info())
-    finally:
-        db.session.close()
-
-    if error: ## if something goes wrong in the code, then show error with status (400)
-        abort (400)
-
-    if not error: ## if code runs succcesfully, display the new object to the Client after adding it to the DB
-        return jsonify(body)
-
+  error = False
+  body = {}
+  try:
+    description = request.get_json()['description']
+    todo = Todo(description=description, completed=False)
+    db.session.add(todo)
+    db.session.commit()
+    body['id'] = todo.id
+    body['completed'] = todo.completed
+    body['description'] = todo.description
+  except:
+    error = True
+    db.session.rollback()
+    print(sys.exc_info())
+  finally:
+    db.session.close()
+  if error:
+    abort (400)
+  else:
+    return jsonify(body)
 
 
 
@@ -96,23 +94,33 @@ def set_completed_todo(todo_id):
         db.session.commit()
 
     except:
-        db.sessio.rollback()
+        db.session.rollback()
     finally:
         db.session.close()
 
     return redirect(url_for('index')) # after refresh, <- will return fresh items in the list 
 
+
 # code below deals with "D" in CRUD
+# delete todo 
 @app.route('/todos/<todo_id>', methods=['DELETE'])
 def delete_todo(todo_id):
-    try:
-        Todo.query.filter_by(id=todo_id).delete()
-        db.session.commit()
-    except:
-        db.session.rollback()
-    finally:
-        db.session.close()
-    return jsonify({'success': True})
+ try:
+     Todo.query.filter_by(id=todo_id).delete()
+     db.session.commit()
+ except:
+       db.session.rollback()
+ finally:
+     db.session.close()
+ return jsonify({ 'success': True })
+
+
+
+
+
+
+
+
     
 #always include this at the bottom of your code (port 3000 is only necessary in workspaces)
 
