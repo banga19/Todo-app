@@ -1,4 +1,3 @@
-from subprocess import CompletedProcess
 from flask import Flask, render_template, request, redirect, url_for, jsonify, abort
 from flask_sqlalchemy import SQLAlchemy
 import sys ## use to print out system info incase code brings out an error
@@ -24,7 +23,7 @@ class Todo(db.Model):
     __tablename__= 'todos'
     id = db.Column(db.Integer, primary_key=True)
     description = db.Column(db.String(), nullable=False)
-    completed = db.Column(db.Boolean, nullable=False)
+    completed = db.Column(db.Boolean, nullable=True)
     list_id = db.Column(db.Integer, db.ForeignKey('todolists.id'), nullable=False)
 
 
@@ -46,19 +45,7 @@ class TodoList(db.Model):
         return f'<Todolist {self.id} {self.name}>'
 
 
-#This code below represents the 'R' in CRUD
-## code below  will display list of Todo Items stored in the database
-@app.route('/list/<list_id>') # <-- controller
-def get_list_todos(): 
-    return render_template('index.html', 
-    todos=Todo.query.filter_by(list_id='list_id').all())  
-
-
-@app.route('/')
-def index():
-  return redirect(url_for('get_list_todos', list_id=1)) ## will redirect code to a view that has list of todos WHERE id IS 1 
-
-
+#### controllers
 @app.route('/todos/create', methods=['POST'])
 def create_todo():
   error = False
@@ -117,11 +104,19 @@ def delete_todo(todo_id):
 
 
 
+##controller used to get and display list of items in Database
+@app.route('/lists/<list_id>')
+def get_list_todos(list_id):
+  return render_template('index.html' , todos=Todo.query.filter_by(list_id=list_id)
+  .order_by('id').all())
+
+
+@app.route('/')
+def index():
+  return redirect(url_for('get_list_todos' , list_id=1))
 
 
 
-
-    
 #always include this at the bottom of your code (port 3000 is only necessary in workspaces)
 
 #if __name__ == '__main__':
