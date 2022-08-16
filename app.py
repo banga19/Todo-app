@@ -52,40 +52,24 @@ def create_todo():
   body = {}
   try:
     description = request.get_json()['description']
-    todo = Todo(description=description, completed=False)
+    list_id = request.get_json()['list_id']
+    todo = Todo(description=description)
+    active_list = TodoList.query.get(list_id)
+    todo.list = active_list
     db.session.add(todo)
     db.session.commit()
-    body['id'] = todo.id
-    body['completed'] = todo.completed
     body['description'] = todo.description
   except:
-    error = True
+    error = True  
     db.session.rollback()
     print(sys.exc_info())
   finally:
     db.session.close()
-  if error:
-    abort (400)
-  else:
+  if not error:
     return jsonify(body)
+  else:
+    abort(500)
 
-
-
-# controller code below deals with the "U" section in CRUD 
-@app.route('/todos/<todo_id>/set-completed', methods=['POST'])
-def set_completed_todo(todo_id):
-    try:
-        completed = request.get_json()['completed']
-        todo = Todo.query.get(todo_id)
-        todo.completed = completed
-        db.session.commit()
-
-    except:
-        db.session.rollback()
-    finally:
-        db.session.close()
-
-    return redirect(url_for('index')) # after refresh, <- will return fresh items in the list 
 
 
 # code below deals with "D" in CRUD
@@ -103,12 +87,31 @@ def delete_todo(todo_id):
 
 
 
+# controller code below deals with the "U" section in CRUD 
+@app.route('/todos/<todo_id>/set-completed', methods=['POST'])
+def set_completed_todo(todo_id):
+    try:
+        completed = request.get_json()['completed']
+        print('completed', completed)
+        todo = Todo.query.get(todo_id)
+        todo.completed = completed
+        db.session.commit()
+
+    except:
+        db.session.rollback()
+    finally:
+        db.session.close()
+    return redirect(url_for('index')) # after refresh, <- will return fresh items in the list 
+
 
 ##controller used to get and display list of items in Database
 @app.route('/lists/<list_id>')
 def get_list_todos(list_id):
-  return render_template('index.html' , todos=Todo.query.filter_by(list_id=list_id)
-  .order_by('id').all())
+  return render_template('index.html',
+  lists=TodoList.query.all(),
+  active_list=TodoList.query.get(list_id),
+  todos = Todo.query.filter_by(list_id=list_id).order_by('id').all()
+  )
 
 
 @app.route('/')
