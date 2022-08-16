@@ -42,6 +42,9 @@ class TodoList(db.Model):
     name = db.Column(db.String(), nullable=False)
     todos = db.relationship('Todo', backref='list', lazy=True)
 
+    def __repr__(self):
+        return f'<Todolist {self.id} {self.name}>'
+
 
 #This code below represents the 'R' in CRUD
 ## code below links html template and our Todo-app
