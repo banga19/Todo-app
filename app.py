@@ -25,6 +25,7 @@ class Todo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     description = db.Column(db.String(), nullable=False)
     completed = db.Column(db.Boolean, nullable=False)
+    list_id = db.Column(db.Integer, db.ForeignKey('todolists.id'), nullable=True)
 
 
     def __repr__(self):
@@ -32,6 +33,14 @@ class Todo(db.Model):
 
 #code below creates the Todo {Table} in the todoapp {database}
 #db.create_all()
+
+
+class TodoList(db.Model):
+    __tablename__ = 'todolists'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(), nullable=False)
+    todos = db.relationship('Todo', backref='list', lazy=True)
 
 
 #This code below represents the 'R' in CRUD
