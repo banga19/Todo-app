@@ -47,18 +47,18 @@ class TodoList(db.Model):
 
 
 #This code below represents the 'R' in CRUD
-## code below links html template and our Todo-app
-@app.route('/') # <-- controller
-def index(): 
-    return render_template('index.html', todos=Todo.query.order_by('id').all())  # <-- first part {'index.html'} is the 'View' layer,
-     # second layer {data=Todo.query.all()} is the 'Model' that has the data to be displayed. 
+## code below  will display list of Todo Items stored in the database
+@app.route('/list/<list_id>') # <-- controller
+def get_list_todos(): 
+    return render_template('index.html', 
+    todos=Todo.query.filter_by(list_id='list_id').all())  
 
 
-## Code below reprensents the 'C' in CRUD
-## code below creates a new todo item, saves the new record to the db 
-# and updates the View with new list of records
-# it uses ajax to fetch requests from client side and
-##? how to make the client refresh only a part of it, instead of the whole webpage
+@app.route('/')
+def index():
+  return redirect(url_for('get_list_todos', list_id=1)) ## will redirect code to a view that has list of todos WHERE id IS 1 
+
+
 @app.route('/todos/create', methods=['POST'])
 def create_todo():
   error = False
